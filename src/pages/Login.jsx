@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axiosConfig";
 
-function Login(){
+function Login() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const login = async () => {
 
-        try{
+        try {
 
             const response = await api.post("/auth/login", {
                 username,
@@ -19,14 +22,15 @@ function Login(){
 
             alert("Login correcto");
 
-        }catch(error){
+            // 👉 ahora va a OPCIONES
+            navigate("/opciones");
 
+        } catch (error) {
             alert("Error en login");
         }
-    }
+    };
 
-    return(
-
+    return (
         <div className="container mt-5">
 
             <div className="card p-4">
@@ -36,14 +40,14 @@ function Login(){
                 <input
                     className="form-control mt-3"
                     placeholder="Usuario"
-                    onChange={(e)=>setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
 
                 <input
                     type="password"
                     className="form-control mt-3"
                     placeholder="Contraseña"
-                    onChange={(e)=>setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
                 <button
@@ -56,7 +60,7 @@ function Login(){
             </div>
 
         </div>
-    )
+    );
 }
 
 export default Login;

@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Materias from "./pages/Materias";
-import Alumnos from "./pages/Alumnos";
-import Profesores from "./pages/Profesores";
+import Login from "./pages/Login";
+import Opciones from "./pages/Opciones";
 
 function App() {
   return (
@@ -10,10 +9,8 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Index />} />
-        <Route path="/materias" element={<Materias />} />
-        <Route path="/alumnos" element={<Alumnos />} />
-        <Route path="/profesores" element={<Profesores />} />
-
+        <Route path="/login" element={<Login />} />
+        <Route path="/opciones" element={<Opciones />} />
       </Routes>
     </BrowserRouter>
   );
