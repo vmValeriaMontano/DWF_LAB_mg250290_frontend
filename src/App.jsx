@@ -5,6 +5,7 @@ import Materias from "./pages/Materias";
 import Opciones from "./pages/Opciones";
 import Register from "./pages/Register";
 import Profesores from "./pages/Profesores";
+import Alumnos from "./pages/Alumnos";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/opciones" element={<Opciones />} />
         <Route path="/materias" element={<Materias />} />
         <Route path="/profesores" element={<Profesores />} />
+        <Route path="/alumnos" element={<Alumnos />} />
       </Routes>
     </BrowserRouter>
   );
