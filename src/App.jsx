@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Materias from "./pages/Materias";
 import Opciones from "./pages/Opciones";
 import Register from "./pages/Register";
+import Profesores from "./pages/Profesores";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/opciones" element={<Opciones />} />
         <Route path="/materias" element={<Materias />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/profesores" element={<Profesores />} />
       </Routes>
     </BrowserRouter>
   );
