@@ -18,14 +18,21 @@ function Login() {
                 password
             });
 
+            // 🔥 GUARDAR TOKEN
             localStorage.setItem("token", response.data.token);
+
+            // 🔥 GUARDAR ROL
+            localStorage.setItem("rol", response.data.rol);
 
             alert("Login correcto");
 
-            // 👉 ahora va a OPCIONES
+            // 👉 IR A OPCIONES
             navigate("/opciones");
 
         } catch (error) {
+
+            console.log(error);
+
             alert("Error en login");
         }
     };
