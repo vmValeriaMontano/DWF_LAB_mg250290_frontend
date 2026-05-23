@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Inscripciones() {
   const navigate = useNavigate();
-  
+
   const [inscripciones, setInscripciones] = useState([]);
 
   const [alumnos, setAlumnos] = useState([]);
@@ -14,9 +14,15 @@ function Inscripciones() {
   const [materiaId, setMateriaId] = useState("");
 
   // EDIT
-  const [editando, setEditando] = useState(false); //btn dinamico
+  const [editando, setEditando] = useState(false);
   const [oldAlumnoId, setOldAlumnoId] = useState("");
   const [oldMateriaId, setOldMateriaId] = useState("");
+
+  // ROL
+  const rol = localStorage.getItem("rol");
+
+  // USER LOGEADO
+  const username = localStorage.getItem("username");
 
   // listar
   const obtenerInscripciones = async () => {
@@ -46,41 +52,74 @@ function Inscripciones() {
     }
   };
 
-  // inscribir / actualizar
+  // guardar
   const guardar = async () => {
     try {
+
       if (!alumnoId || !materiaId) {
         alert("Selecciona alumno y materia");
         return;
       }
 
-      //  SI ESTÁ EDITANDO
-      if (editando) {
+      // USER SOLO PUEDE INSCRIBIRSE A SI MISMO
+      if (rol === "USER") {
+
+        const alumnoSeleccionado = alumnos.find(
+          (a) => a.id == alumnoId
+        );
+
+        if (
+          alumnoSeleccionado &&
+          alumnoSeleccionado.nombre.toLowerCase() !==
+            username.toLowerCase()
+        ) {
+          alert("Solo puedes inscribirte tú mismo");
+          return;
+        }
+      }
+
+      // ADMIN PUEDE EDITAR
+      if (editando && rol === "ADMIN") {
+
         await api.delete(
-          `/api/inscripciones?alumnoId=${oldAlumnoId}&materiaId=${oldMateriaId}`,
+          `/api/inscripciones?alumnoId=${oldAlumnoId}&materiaId=${oldMateriaId}`
         );
 
         setEditando(false);
       }
 
-      //  CREAR NUEVA INSCRIPCIÓN
+      // CREAR INSCRIPCIÓN
       await api.post(
-        `/api/inscripciones?alumnoId=${alumnoId}&materiaId=${materiaId}`,
+        `/api/inscripciones?alumnoId=${alumnoId}&materiaId=${materiaId}`
       );
 
       limpiar();
       obtenerInscripciones();
+
     } catch (error) {
       console.log(error);
     }
   };
 
   // eliminar
-  const eliminar = async (aId, mId) => {
+  const eliminar = async (aId, mId, nombreAlumno) => {
     try {
-      await api.delete(`/api/inscripciones?alumnoId=${aId}&materiaId=${mId}`);
+
+      // USER SOLO ELIMINA LO SUYO
+      if (
+        rol === "USER" &&
+        nombreAlumno.toLowerCase() !== username.toLowerCase()
+      ) {
+        alert("No puedes eliminar inscripciones de otros");
+        return;
+      }
+
+      await api.delete(
+        `/api/inscripciones?alumnoId=${aId}&materiaId=${mId}`
+      );
 
       obtenerInscripciones();
+
     } catch (error) {
       console.log(error);
     }
@@ -88,6 +127,13 @@ function Inscripciones() {
 
   // editar
   const editar = (i) => {
+
+    // USER NO PUEDE EDITAR
+    if (rol === "USER") {
+      alert("Los usuarios no pueden editar inscripciones");
+      return;
+    }
+
     setAlumnoId(i.alumno.id);
     setMateriaId(i.materia.id);
 
@@ -97,9 +143,15 @@ function Inscripciones() {
     setEditando(true);
   };
 
+  // limpiar
   const limpiar = () => {
     setAlumnoId("");
     setMateriaId("");
+
+    setOldAlumnoId("");
+    setOldMateriaId("");
+
+    setEditando(false);
   };
 
   useEffect(() => {
@@ -110,8 +162,10 @@ function Inscripciones() {
 
   return (
     <div className="container mt-5">
+
       {/* FORM */}
       <div className="card p-4">
+
         <h2>CRUD Inscripciones</h2>
 
         {/* ALUMNOS */}
@@ -144,18 +198,22 @@ function Inscripciones() {
           ))}
         </select>
 
-        {/* BOTÓN DINÁMICO */}
+        {/* BOTÓN */}
         <button
-          className={`btn mt-3 ${editando ? "btn-warning" : "btn-primary"}`}
+          className={`btn mt-3 ${
+            editando ? "btn-warning" : "btn-primary"
+          }`}
           onClick={guardar}
           disabled={!alumnoId || !materiaId}
         >
           {editando ? "Actualizar inscripción" : "Inscribir"}
         </button>
+
       </div>
 
       {/* TABLA */}
       <table className="table table-striped mt-4">
+
         <thead>
           <tr>
             <th>Alumno</th>
@@ -167,37 +225,55 @@ function Inscripciones() {
         <tbody>
           {inscripciones.map((i) => (
             <tr key={`${i.alumno?.id}-${i.materia?.id}`}>
+
               <td>
-                {i.alumno?.nombre ?? "Sin alumno"} {i.alumno?.apellido ?? ""}
+                {i.alumno?.nombre ?? "Sin alumno"}{" "}
+                {i.alumno?.apellido ?? ""}
               </td>
 
-              <td>{i.materia?.nombre ?? "Sin materia"}</td>
+              <td>
+                {i.materia?.nombre ?? "Sin materia"}
+              </td>
 
               <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => editar(i)}
-                >
-                  Editar
-                </button>
+
+                {rol === "ADMIN" && (
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => editar(i)}
+                  >
+                    Editar
+                  </button>
+                )}
 
                 <button
                   className="btn btn-danger btn-sm"
-                  onClick={() => eliminar(i.alumno.id, i.materia.id)}
+                  onClick={() =>
+                    eliminar(
+                      i.alumno.id,
+                      i.materia.id,
+                      i.alumno.nombre
+                    )
+                  }
                 >
                   Eliminar
                 </button>
+
               </td>
+
             </tr>
           ))}
         </tbody>
+
       </table>
+
       <button
         className="btn btn-success btn-lg"
         onClick={() => navigate("/opciones")}
       >
         Volver a opciones
       </button>
+
     </div>
   );
 }

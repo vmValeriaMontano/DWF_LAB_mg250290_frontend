@@ -3,7 +3,11 @@ import api from "../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
 function Profesores() {
+
   const navigate = useNavigate();
+
+  // 🔥 ROL
+  const rol = localStorage.getItem("rol");
 
   const [profesores, setProfesores] = useState([]);
 
@@ -16,9 +20,11 @@ function Profesores() {
   // listar
   const obtenerProfesores = async () => {
     try {
+
       const response = await api.get("/api/profesores");
 
       setProfesores(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +32,15 @@ function Profesores() {
 
   // guardar
   const guardarProfesor = async () => {
+
+    // 🔥 SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede guardar");
+      return;
+    }
+
     try {
+
       await api.post("/api/profesores", {
         nombre,
       });
@@ -34,6 +48,7 @@ function Profesores() {
       limpiarFormulario();
 
       obtenerProfesores();
+
     } catch (error) {
       console.log(error);
     }
@@ -41,10 +56,19 @@ function Profesores() {
 
   // eliminar
   const eliminarProfesor = async (id) => {
+
+    // 🔥 SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede eliminar");
+      return;
+    }
+
     try {
+
       await api.delete(`/api/profesores/${id}`);
 
       obtenerProfesores();
+
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +76,13 @@ function Profesores() {
 
   // datos para editar
   const editarProfesor = (profesor) => {
+
+    // 🔥 SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede editar");
+      return;
+    }
+
     setNombre(profesor.nombre);
 
     setIdProfesor(profesor.id);
@@ -61,7 +92,15 @@ function Profesores() {
 
   // actualizar
   const actualizarProfesor = async () => {
+
+    // 🔥 SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede actualizar");
+      return;
+    }
+
     try {
+
       await api.put(`/api/profesores/${idProfesor}`, {
         id: idProfesor,
         nombre,
@@ -70,6 +109,7 @@ function Profesores() {
       limpiarFormulario();
 
       obtenerProfesores();
+
     } catch (error) {
       console.log(error);
     }
@@ -77,6 +117,7 @@ function Profesores() {
 
   // limpiar
   const limpiarFormulario = () => {
+
     setNombre("");
 
     setIdProfesor(null);
@@ -90,7 +131,9 @@ function Profesores() {
 
   return (
     <div className="container mt-5">
+
       <div className="card p-4">
+
         <h2>CRUD Profesores</h2>
 
         <input
@@ -101,58 +144,83 @@ function Profesores() {
           onChange={(e) => setNombre(e.target.value)}
         />
 
-        {editando ? (
-          <button className="btn btn-warning mt-3" onClick={actualizarProfesor}>
-            Actualizar
-          </button>
-        ) : (
-          <button className="btn btn-primary mt-3" onClick={guardarProfesor}>
-            Guardar
-          </button>
+        {/* BOTÓN */}
+        {rol === "ADMIN" && (
+          editando ? (
+            <button
+              className="btn btn-warning mt-3"
+              onClick={actualizarProfesor}
+            >
+              Actualizar
+            </button>
+          ) : (
+            <button
+              className="btn btn-primary mt-3"
+              onClick={guardarProfesor}
+            >
+              Guardar
+            </button>
+          )
         )}
+
       </div>
 
       <table className="table table-striped mt-4">
+
         <thead>
           <tr>
+
             <th>ID</th>
             <th>Nombre</th>
-            <th>Acciones</th>
+
+            {rol === "ADMIN" && (
+              <th>Acciones</th>
+            )}
+
           </tr>
         </thead>
 
         <tbody>
           {profesores.map((profesor) => (
             <tr key={profesor.id}>
+
               <td>{profesor.id}</td>
 
               <td>{profesor.nombre}</td>
 
-              <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => editarProfesor(profesor)}
-                >
-                  Editar
-                </button>
+              {rol === "ADMIN" && (
+                <td>
 
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => eliminarProfesor(profesor.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => editarProfesor(profesor)}
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => eliminarProfesor(profesor.id)}
+                  >
+                    Eliminar
+                  </button>
+
+                </td>
+              )}
+
             </tr>
           ))}
         </tbody>
+
       </table>
+
       <button
         className="btn btn-success btn-lg"
         onClick={() => navigate("/opciones")}
       >
         Volver a opciones
       </button>
+
     </div>
   );
 }

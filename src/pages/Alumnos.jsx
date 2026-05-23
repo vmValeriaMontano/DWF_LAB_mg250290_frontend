@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
 import { useNavigate } from "react-router-dom";
 
-
 function Alumnos() {
+
   const navigate = useNavigate();
+
+  // ROL
+  const rol = localStorage.getItem("rol");
 
   const [alumnos, setAlumnos] = useState([]);
 
@@ -19,9 +22,11 @@ function Alumnos() {
   // listar
   const obtenerAlumnos = async () => {
     try {
+
       const response = await api.get("/api/alumnos");
 
       setAlumnos(response.data);
+
     } catch (error) {
       console.log(error);
     }
@@ -29,7 +34,15 @@ function Alumnos() {
 
   // guardar
   const guardarAlumno = async () => {
+
+    // SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede guardar");
+      return;
+    }
+
     try {
+
       await api.post("/api/alumnos", {
         nombre,
         apellido,
@@ -38,6 +51,7 @@ function Alumnos() {
       limpiarFormulario();
 
       obtenerAlumnos();
+
     } catch (error) {
       console.log(error);
     }
@@ -45,10 +59,19 @@ function Alumnos() {
 
   // eliminar
   const eliminarAlumno = async (id) => {
+
+    // SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede eliminar");
+      return;
+    }
+
     try {
+
       await api.delete(`/api/alumnos/${id}`);
 
       obtenerAlumnos();
+
     } catch (error) {
       console.log(error);
     }
@@ -56,6 +79,13 @@ function Alumnos() {
 
   // editar
   const editarAlumno = (alumno) => {
+
+    // SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede editar");
+      return;
+    }
+
     setNombre(alumno.nombre);
 
     setApellido(alumno.apellido);
@@ -67,7 +97,15 @@ function Alumnos() {
 
   // actualizar
   const actualizarAlumno = async () => {
+
+    // SOLO ADMIN
+    if (rol !== "ADMIN") {
+      alert("Solo ADMIN puede actualizar");
+      return;
+    }
+
     try {
+
       await api.put(`/api/alumnos/${idAlumno}`, {
         id: idAlumno,
         nombre,
@@ -77,6 +115,7 @@ function Alumnos() {
       limpiarFormulario();
 
       obtenerAlumnos();
+
     } catch (error) {
       console.log(error);
     }
@@ -84,6 +123,7 @@ function Alumnos() {
 
   // limpiar
   const limpiarFormulario = () => {
+
     setNombre("");
 
     setApellido("");
@@ -99,7 +139,9 @@ function Alumnos() {
 
   return (
     <div className="container mt-5">
+
       <div className="card p-4">
+
         <h2>CRUD Alumnos</h2>
 
         <input
@@ -118,61 +160,86 @@ function Alumnos() {
           onChange={(e) => setApellido(e.target.value)}
         />
 
-        {editando ? (
-          <button className="btn btn-warning mt-3" onClick={actualizarAlumno}>
-            Actualizar
-          </button>
-        ) : (
-          <button className="btn btn-primary mt-3" onClick={guardarAlumno}>
-            Guardar
-          </button>
+        {/* BOTÓN */}
+        {rol === "ADMIN" && (
+          editando ? (
+            <button
+              className="btn btn-warning mt-3"
+              onClick={actualizarAlumno}
+            >
+              Actualizar
+            </button>
+          ) : (
+            <button
+              className="btn btn-primary mt-3"
+              onClick={guardarAlumno}
+            >
+              Guardar
+            </button>
+          )
         )}
+
       </div>
 
       <table className="table table-striped mt-4">
+
         <thead>
           <tr>
+
             <th>ID</th>
             <th>Nombre</th>
             <th>Apellido</th>
-            <th>Acciones</th>
+
+            {rol === "ADMIN" && (
+              <th>Acciones</th>
+            )}
+
           </tr>
         </thead>
 
         <tbody>
           {alumnos.map((alumno) => (
             <tr key={alumno.id}>
+
               <td>{alumno.id}</td>
 
               <td>{alumno.nombre}</td>
 
               <td>{alumno.apellido}</td>
 
-              <td>
-                <button
-                  className="btn btn-warning btn-sm me-2"
-                  onClick={() => editarAlumno(alumno)}
-                >
-                  Editar
-                </button>
+              {rol === "ADMIN" && (
+                <td>
 
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => eliminarAlumno(alumno.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => editarAlumno(alumno)}
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => eliminarAlumno(alumno.id)}
+                  >
+                    Eliminar
+                  </button>
+
+                </td>
+              )}
+
             </tr>
           ))}
         </tbody>
+
       </table>
+
       <button
         className="btn btn-success btn-lg"
         onClick={() => navigate("/opciones")}
       >
         Volver a opciones
       </button>
+
     </div>
   );
 }

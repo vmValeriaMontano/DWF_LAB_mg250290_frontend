@@ -6,7 +6,7 @@ function Materias() {
 
   const navigate = useNavigate();
 
-  // 🔥 ROL
+  // ROL
   const rol = localStorage.getItem("rol");
 
   const [materias, setMaterias] = useState([]);
@@ -41,7 +41,7 @@ function Materias() {
   // guardar
   const guardarMateria = async () => {
 
-    // 🔥 SOLO ADMIN
+    // SOLO ADMIN
     if (rol !== "ADMIN") {
       alert("Solo ADMIN puede guardar");
       return;
@@ -67,7 +67,7 @@ function Materias() {
   // eliminar
   const eliminarMateria = async (id) => {
 
-    // 🔥 SOLO ADMIN
+    // SOLO ADMIN
     if (rol !== "ADMIN") {
       alert("Solo ADMIN puede eliminar");
       return;
@@ -87,7 +87,7 @@ function Materias() {
   // editar
   const editarMateria = (m) => {
 
-    // 🔥 SOLO ADMIN
+    // SOLO ADMIN
     if (rol !== "ADMIN") {
       alert("Solo ADMIN puede editar");
       return;
@@ -104,7 +104,7 @@ function Materias() {
   // actualizar
   const actualizarMateria = async () => {
 
-    // 🔥 SOLO ADMIN
+    // SOLO ADMIN
     if (rol !== "ADMIN") {
       alert("Solo ADMIN puede actualizar");
       return;
