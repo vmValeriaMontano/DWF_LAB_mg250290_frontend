@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+//importamos bootstrap
+import "bootstrap/dist/css/bootstrap.min.css";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Materias from "./pages/Materias";
