@@ -28,6 +28,11 @@ function Opciones() {
                 >
                     Profesores
                 </button>
+                <button className="btn btn-info btn-lg"
+                    onClick={() => navigate("/inscripciones")}
+                >
+                    Inscripciones
+                </button>
 
             </div>
 

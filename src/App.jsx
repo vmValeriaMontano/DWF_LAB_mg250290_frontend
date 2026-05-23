@@ -6,6 +6,8 @@ import Opciones from "./pages/Opciones";
 import Register from "./pages/Register";
 import Profesores from "./pages/Profesores";
 import Alumnos from "./pages/Alumnos";
+import Inscripciones from "./pages/Inscripciones";
+
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/materias" element={<Materias />} />
         <Route path="/profesores" element={<Profesores />} />
         <Route path="/alumnos" element={<Alumnos />} />
+        <Route path="/inscripciones" element={<Inscripciones />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
