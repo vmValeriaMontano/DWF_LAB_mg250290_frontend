@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
+import { useNavigate } from "react-router-dom";
+
 
 function Alumnos() {
+  const navigate = useNavigate();
+
   const [alumnos, setAlumnos] = useState([]);
 
   const [nombre, setNombre] = useState("");
@@ -163,6 +167,12 @@ function Alumnos() {
           ))}
         </tbody>
       </table>
+      <button
+        className="btn btn-success btn-lg"
+        onClick={() => navigate("/opciones")}
+      >
+        Volver a opciones
+      </button>
     </div>
   );
 }

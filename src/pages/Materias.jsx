@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
+import { useNavigate } from "react-router-dom";
 
 function Materias() {
+  const navigate = useNavigate();
+
   const [materias, setMaterias] = useState([]);
   const [profesores, setProfesores] = useState([]);
 
@@ -177,6 +180,12 @@ function Materias() {
           ))}
         </tbody>
       </table>
+      <button
+        className="btn btn-success btn-lg"
+        onClick={() => navigate("/opciones")}
+      >
+        Volver a opciones
+      </button>
     </div>
   );
 }

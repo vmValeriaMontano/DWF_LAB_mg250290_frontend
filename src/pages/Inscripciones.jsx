@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
+import { useNavigate } from "react-router-dom";
 
 function Inscripciones() {
+  const navigate = useNavigate();
+  
   const [inscripciones, setInscripciones] = useState([]);
 
   const [alumnos, setAlumnos] = useState([]);
@@ -10,12 +13,12 @@ function Inscripciones() {
   const [alumnoId, setAlumnoId] = useState("");
   const [materiaId, setMateriaId] = useState("");
 
-  // EDIT 
+  // EDIT
   const [editando, setEditando] = useState(false); //btn dinamico
   const [oldAlumnoId, setOldAlumnoId] = useState("");
   const [oldMateriaId, setOldMateriaId] = useState("");
 
-  // listar 
+  // listar
   const obtenerInscripciones = async () => {
     try {
       const res = await api.get("/api/inscripciones");
@@ -46,7 +49,6 @@ function Inscripciones() {
   // inscribir / actualizar
   const guardar = async () => {
     try {
-
       if (!alumnoId || !materiaId) {
         alert("Selecciona alumno y materia");
         return;
@@ -55,7 +57,7 @@ function Inscripciones() {
       //  SI ESTÁ EDITANDO
       if (editando) {
         await api.delete(
-          `/api/inscripciones?alumnoId=${oldAlumnoId}&materiaId=${oldMateriaId}`
+          `/api/inscripciones?alumnoId=${oldAlumnoId}&materiaId=${oldMateriaId}`,
         );
 
         setEditando(false);
@@ -63,12 +65,11 @@ function Inscripciones() {
 
       //  CREAR NUEVA INSCRIPCIÓN
       await api.post(
-        `/api/inscripciones?alumnoId=${alumnoId}&materiaId=${materiaId}`
+        `/api/inscripciones?alumnoId=${alumnoId}&materiaId=${materiaId}`,
       );
 
       limpiar();
       obtenerInscripciones();
-
     } catch (error) {
       console.log(error);
     }
@@ -77,9 +78,7 @@ function Inscripciones() {
   // eliminar
   const eliminar = async (aId, mId) => {
     try {
-      await api.delete(
-        `/api/inscripciones?alumnoId=${aId}&materiaId=${mId}`
-      );
+      await api.delete(`/api/inscripciones?alumnoId=${aId}&materiaId=${mId}`);
 
       obtenerInscripciones();
     } catch (error) {
@@ -87,7 +86,7 @@ function Inscripciones() {
     }
   };
 
-  // editar 
+  // editar
   const editar = (i) => {
     setAlumnoId(i.alumno.id);
     setMateriaId(i.materia.id);
@@ -111,10 +110,8 @@ function Inscripciones() {
 
   return (
     <div className="container mt-5">
-
       {/* FORM */}
       <div className="card p-4">
-
         <h2>CRUD Inscripciones</h2>
 
         {/* ALUMNOS */}
@@ -155,12 +152,10 @@ function Inscripciones() {
         >
           {editando ? "Actualizar inscripción" : "Inscribir"}
         </button>
-
       </div>
 
       {/* TABLA */}
       <table className="table table-striped mt-4">
-
         <thead>
           <tr>
             <th>Alumno</th>
@@ -172,18 +167,13 @@ function Inscripciones() {
         <tbody>
           {inscripciones.map((i) => (
             <tr key={`${i.alumno?.id}-${i.materia?.id}`}>
-
               <td>
-                {i.alumno?.nombre ?? "Sin alumno"}{" "}
-                {i.alumno?.apellido ?? ""}
+                {i.alumno?.nombre ?? "Sin alumno"} {i.alumno?.apellido ?? ""}
               </td>
 
-              <td>
-                {i.materia?.nombre ?? "Sin materia"}
-              </td>
+              <td>{i.materia?.nombre ?? "Sin materia"}</td>
 
               <td>
-
                 <button
                   className="btn btn-warning btn-sm me-2"
                   onClick={() => editar(i)}
@@ -197,15 +187,17 @@ function Inscripciones() {
                 >
                   Eliminar
                 </button>
-
               </td>
-
             </tr>
           ))}
         </tbody>
-
       </table>
-
+      <button
+        className="btn btn-success btn-lg"
+        onClick={() => navigate("/opciones")}
+      >
+        Volver a opciones
+      </button>
     </div>
   );
 }
